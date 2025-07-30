@@ -1,4 +1,4 @@
-const categories = [
+export const categories = [
   {
     "code": "AT", 
     "name": "Agent Traits",
@@ -14,7 +14,7 @@ const categories = [
   }
 ];
 
-const cards = [
+export const cards = [
   {
     "category": "AT",
     "name": "Empathy",
@@ -34,4 +34,4 @@ const cards = [
     "machine": "Clear assignment of fault in automated decision-making pipelines."
   }
 ]
-export default cards;
+
