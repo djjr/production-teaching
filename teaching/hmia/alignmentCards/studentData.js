@@ -34,3 +34,4 @@ const cards = [
     "machine": "Clear assignment of fault in automated decision-making pipelines."
   }
 ]
+export default cards;
