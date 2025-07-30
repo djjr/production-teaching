@@ -7,13 +7,12 @@ const categories = [
     "description": "An agent trait is a property or capacity or propensity that we might want to build into an agent to maximize the likelihood its behavior will be aligned."
   },
   {
-    "code": "", 
+    "code": "xxx", 
     "name": "", 
     "pathology": "", 
     "description": ""
   }
 ];
-
 
 const cards = [
   {
