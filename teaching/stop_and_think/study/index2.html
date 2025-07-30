@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>STOP+THINK</title>
+  <style>
+    body { font-family: sans-serif; margin: 40px; max-width: 800px; }
+    textarea { width: 100%; height: 120px; margin-top: 10px; }
+    .question-number { font-weight: bold; font-size: 1.2em; }
+    .navigation { margin-top: 20px; }
+    button { margin-right: 10px; }
+  </style>
+</head>
+<body>
+
+<h1>STOP+THINK</h1>
+<div id="content"></div>
+<div class="navigation" id="nav"></div>
+
+<script src="stop_and_think.js"></script>
+<script>
+    function getQuestionListFromURL() {
+    const param = new URL(window.location.href).searchParams.get("q");
+    return param ? param.split(",").map(n => parseInt(n.trim())) : [];
+    }
+
+    function getCurrentIndexFromURL() {
+    const param = new URL(window.location.href).searchParams.get("i");
+    return param ? parseInt(param) : 0;
+    }
+
+    function renderQuestion() {
+    const qList = getQuestionListFromURL();
+    const currentIndex = getCurrentIndexFromURL();
+    const qNum = qList[currentIndex];
+    const question = window.stopThinkQuestions.find(q => q.number === qNum);
+
+    const contentDiv = document.getElementById("content");
+    if (!question) {
+        contentDiv.innerHTML = `<p>Question not found or list is empty. Try using ?q=68,69</p>`;
+        return;
+    }
+
+    const storageKey = `stopthink_q_${qNum}`;
+    const saved = localStorage.getItem(storageKey) || "";
+
+    contentDiv.innerHTML = `
+        <div class="question-number">Question ${question.number}</div>
+        <div class="question-text">${question.question}</div>
+        <textarea id="response">${saved}</textarea>
+    `;
+
+    document.getElementById("response").addEventListener("input", (e) => {
+        localStorage.setItem(storageKey, e.target.value);
+    });
+
+    renderNav(qList, currentIndex);
+    }
+
+    function renderNav(qList, currentIndex) {
+    const nav = document.getElementById("nav");
+    nav.innerHTML = "";
+
+    const nextIndex = currentIndex + 1;
+    if (nextIndex < qList.length) {
+        const nextQ = qList[nextIndex];
+        const b = document.createElement("button");
+        b.textContent = `Go on to Question ${nextQ}`;
+        b.onclick = () => {
+        const base = window.location.pathname;
+        const params = new URLSearchParams();
+        params.set("q", qList.join(","));
+        params.set("i", nextIndex);
+        window.location.href = `${base}?${params.toString()}`;
+        };
+        nav.appendChild(b);
+    }
+
+    const dl = document.createElement("button");
+    dl.textContent = "Download All My Answers";
+    dl.onclick = downloadAnswers;
+    nav.appendChild(dl);
+    }
+
+    function downloadAnswers() {
+    let output = "";
+    window.stopThinkQuestions.forEach((card) => {
+        const key = `stopthink_q_${card.number}`;
+        const answer = localStorage.getItem(key) || "";
+        output += `Question ${card.number}: ${card.question}\n${answer}\n\n`;
+    });
+
+    const blob = new Blob([output], { type: "text/plain" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "stop-think-answers.txt";
+    a.click();
+    }
+
+    window.addEventListener("load", renderQuestion);
+
+</script>
+
+</body>
+</html>

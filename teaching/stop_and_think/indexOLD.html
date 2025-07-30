@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Stop + Think</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      padding: 2em;
+      background: #ffffff;
+    }
+    textarea {
+      margin-top: 1em;
+    }
+    .answer {
+        color: green;
+        font-size: 0.8em;
+    }
+  </style>
+  <script src="stop_and_think.js"></script>
+</head>
+<body>
+  <div style="width: 80ch;" id="question-box"></div>
+  <br>
+  <textarea style="width:80ch; height:100px;">Type your response</textarea>
+  <details id="answer-box" style="margin-top: 1em;">
+    <summary style="cursor: pointer; color: #565858; background-color: #ffffff; margin-bottom: 10px;">
+      <span style="font-size: 10pt; color: #565858; font-family: sans-serif"> Compare your response</span>
+    </summary>
+    <div style="border: thin solid #F1F3F4; margin-bottom: 10px; padding: 5px 15px; width: 75ch;">
+      <p class="answer" id="answer-text"><span></span></p>
+    </div>
+  </details>
+
+  <script>
+ 
+
+    function getQueryParam(param) {
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get(param);
+    }
+
+    const qnum = parseInt(getQueryParam("qnum"), 10);
+    const entry = window.stopThinkQuestions.find(q => q.number === qnum);
+
+    if (entry) {
+      document.getElementById("question-box").innerHTML = `
+        <strong><span style="font-size: 12pt;">
+          <strong><span style="color: #ba372a;">STOP</span>
+            <span style="color: #565858ff;">+</span>
+            <span style="color: #377437ff;">THINK</span>: </strong>
+          ${entry.question} (${entry.number})
+        </span></strong>`;
+      document.getElementById("answer-text").innerHTML = entry.answer;
+    } else {
+      document.getElementById("question-box").innerHTML = `<strong>Question not found. Check your qnum parameter.</strong>`;
+      document.getElementById("answer-box").style.display = "none";
+    }
+  </script>
+</body>
+</html>

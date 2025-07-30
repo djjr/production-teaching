@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>STOP+THINK Reflection</title>
+  <style>
+    body { font-family: sans-serif; margin: 40px; max-width: 800px; }
+    textarea { width: 100%; height: 100px; margin-top: 5px; }
+    .card { margin-bottom: 40px; }
+    button { margin: 20px 10px 0 0; }
+    .question-number { font-weight: bold; font-size: 1.1em; }
+  </style>
+</head>
+<body>
+
+<h1>STOP+THINK Reflection Questions</h1>
+<p>Your responses are saved automatically in your browser. You can download or print them for your own use.</p>
+
+<div id="questions"></div>
+
+<button onclick="downloadAnswers()">Download My Answers</button>
+<button onclick="window.print()">Print</button>
+
+<script src="questions.js"></script>
+<script>
+  const container = document.getElementById("questions");
+
+  function renderQuestions() {
+    window.stopThinkQuestions
+      .sort((a, b) => a.number - b.number)  // sort by number
+      .forEach((card) => {
+        const id = `q_${card.number}`;
+        const saved = localStorage.getItem(id) || "";
+
+        const cardDiv = document.createElement("div");
+        cardDiv.className = "card";
+        cardDiv.innerHTML = `
+          <div class="question-number">Question ${card.number}</div>
+          <div class="question-text">${card.question}</div>
+          <textarea id="${id}" placeholder="Type your answer here...">${saved}</textarea>
+        `;
+
+        const textarea = cardDiv.querySelector("textarea");
+        textarea.addEventListener("input", () => {
+          localStorage.setItem(id, textarea.value);
+        });
+
+        container.appendChild(cardDiv);
+      });
+  }
+
+  function downloadAnswers() {
+    let output = "";
+    window.stopThinkQuestions.forEach((card) => {
+      const id = `q_${card.number}`;
+      const answer = localStorage.getItem(id) || "";
+      output += `Question ${card.number}: ${card.question}\n${answer}\n\n`;
+    });
+
+    const blob = new Blob([output], { type: "text/plain" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "stop-think-answers.txt";
+    a.click();
+  }
+
+  window.addEventListener('load', () => {
+    if (window.stopThinkQuestions) {
+      renderQuestions();
+    } else {
+      container.innerText = "Failed to load questions.";
+    }
+  });
+</script>
+
+</body>
+</html>
